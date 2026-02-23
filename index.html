@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You 🌸</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    position: relative;
+}
+
+.flower {
+    font-size: 40px;
+    transition: transform 0.1s linear;
+    cursor: pointer;
+}
+
+.message {
+    margin-top: 20px;
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.final-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
+.bloom {
+    font-size: 120px;
+    transition: transform 2s ease;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div id="flower" class="flower">🌱</div>
+    <div id="text" class="message">Help me grow 🌸</div>
+    <div id="final" class="final-message">
+        Just like this flower...<br>
+        My love for you keeps growing ❤️
+    </div>
+</div>
+
+<script>
+let flower = document.getElementById("flower");
+let text = document.getElementById("text");
+let finalMessage = document.getElementById("final");
+
+let size = 1;
+let growing = false;
+let fullyGrown = false;
+
+function grow() {
+    if (!growing || fullyGrown) return;
+
+    size += 0.02;
+    flower.style.transform = "scale(" + size + ")";
+    
+    if (size >= 3) {
+        fullyGrown = true;
+        flower.innerHTML = "🌸";
+        flower.classList.add("bloom");
+        text.style.display = "none";
+        setTimeout(() => {
+            finalMessage.style.opacity = 1;
+        }, 1000);
+        return;
+    }
+
+    requestAnimationFrame(grow);
+}
+
+flower.addEventListener("touchstart", () => {
+    growing = true;
+    grow();
+});
+
+flower.addEventListener("touchend", () => {
+    growing = false;
+});
+
+flower.addEventListener("mousedown", () => {
+    growing = true;
+    grow();
+});
+
+flower.addEventListener("mouseup", () => {
+    growing = false;
+});
+</script>
+
+</body>
+</html>
