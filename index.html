@@ -3,72 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You 🌸</title>
+<title>For My Love 🌸</title>
 
 <style>
 body {
     margin: 0;
     padding: 0;
-    background: radial-gradient(circle at center, #111 0%, #000 100%);
     overflow: hidden;
-    font-family: 'Arial', sans-serif;
+    background: radial-gradient(circle at center, #1a001a 0%, #000 100%);
+    font-family: Arial, sans-serif;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     color: white;
-    text-align: center;
 }
 
 .container {
-    position: relative;
+    text-align: center;
+    z-index: 10;
 }
 
 .flower {
-    font-size: 40px;
+    font-size: 50px;
     transition: transform 0.1s linear;
-    cursor: pointer;
 }
 
 .message {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 18px;
     opacity: 0.8;
 }
 
-.final-message {
+.particle {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 28px;
+    font-size: 30px;
+    animation: float 4s linear forwards;
+    pointer-events: none;
+}
+
+@keyframes float {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(1.5);
+    }
+}
+
+#surprise {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     opacity: 0;
-    transition: opacity 2s ease;
+    transition: opacity 3s ease;
+    z-index: 20;
 }
-
-.bloom {
-    font-size: 120px;
-    transition: transform 2s ease;
-}
-
 </style>
 </head>
 
 <body>
 
+<img id="surprise" src="photo2.jpg">
+
 <div class="container">
     <div id="flower" class="flower">🌱</div>
-    <div id="text" class="message">Help me grow 🌸</div>
-    <div id="final" class="final-message">
-        Just like this flower...<br>
-        My love for you keeps growing ❤️
-    </div>
+    <div id="text" class="message">Hold me to make me bloom 🌸</div>
 </div>
 
 <script>
 let flower = document.getElementById("flower");
 let text = document.getElementById("text");
-let finalMessage = document.getElementById("final");
+let surprise = document.getElementById("surprise");
 
 let size = 1;
 let growing = false;
@@ -77,40 +86,59 @@ let fullyGrown = false;
 function grow() {
     if (!growing || fullyGrown) return;
 
-    size += 0.02;
+    size += 0.03;
     flower.style.transform = "scale(" + size + ")";
-    
+
     if (size >= 3) {
         fullyGrown = true;
         flower.innerHTML = "🌸";
-        flower.classList.add("bloom");
-        text.style.display = "none";
-        setTimeout(() => {
-            finalMessage.style.opacity = 1;
-        }, 1000);
+        text.innerHTML = "Watch what happens...";
+        explodeFlowers();
+        setTimeout(showSurprise, 4000);
         return;
     }
 
     requestAnimationFrame(grow);
 }
 
+function explodeFlowers() {
+    for (let i = 0; i < 80; i++) {
+        let petal = document.createElement("div");
+        petal.className = "particle";
+        petal.innerHTML = "🌸";
+
+        let x = (Math.random() - 0.5) * window.innerWidth * 2;
+        let y = (Math.random() - 0.5) * window.innerHeight * 2;
+
+        petal.style.setProperty('--x', x + 'px');
+        petal.style.setProperty('--y', y + 'px');
+
+        petal.style.left = window.innerWidth / 2 + "px";
+        petal.style.top = window.innerHeight / 2 + "px";
+
+        document.body.appendChild(petal);
+
+        setTimeout(() => {
+            petal.remove();
+        }, 4000);
+    }
+}
+
+function showSurprise() {
+    document.querySelector(".container").style.opacity = "0";
+    surprise.style.opacity = "1";
+}
+
 flower.addEventListener("touchstart", () => {
     growing = true;
     grow();
 });
-
-flower.addEventListener("touchend", () => {
-    growing = false;
-});
-
+flower.addEventListener("touchend", () => growing = false);
 flower.addEventListener("mousedown", () => {
     growing = true;
     grow();
 });
-
-flower.addEventListener("mouseup", () => {
-    growing = false;
-});
+flower.addEventListener("mouseup", () => growing = false);
 </script>
 
 </body>
