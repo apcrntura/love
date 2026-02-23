@@ -3,53 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For My Love 🌸</title>
+<title>For You 🌸</title>
 
 <style>
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: radial-gradient(circle at center, #1a001a 0%, #000 100%);
-    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at center, #140014 0%, #000 100%);
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: Arial, sans-serif;
     color: white;
+    transition: background 0.4s ease;
 }
 
 .container {
     text-align: center;
     z-index: 10;
+    transition: transform 0.2s ease;
 }
 
 .flower {
     font-size: 50px;
-    transition: transform 0.1s linear;
+    transition: transform 0.3s ease;
+    cursor: pointer;
 }
 
 .message {
     margin-top: 15px;
     font-size: 18px;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 .particle {
     position: absolute;
-    font-size: 30px;
-    animation: float 4s linear forwards;
+    font-size: 28px;
     pointer-events: none;
+    animation: scatter 4s ease-out forwards;
 }
 
-@keyframes float {
+@keyframes scatter {
     0% {
         opacity: 1;
-        transform: translate(0, 0) scale(0.5);
+        transform: translate(0,0) scale(0.5);
     }
     100% {
         opacity: 0;
-        transform: translate(var(--x), var(--y)) scale(1.5);
+        transform: translate(var(--x), var(--y)) scale(1.8);
     }
 }
 
@@ -62,47 +65,68 @@ body {
     transition: opacity 3s ease;
     z-index: 20;
 }
+
+.glow {
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px pink; }
+    to { text-shadow: 0 0 30px hotpink; }
+}
 </style>
 </head>
 
 <body>
 
-<img id="surprise" src="photo2.jpg">
+<img id="surprise" src="surprise.jpg">
 
 <div class="container">
     <div id="flower" class="flower">🌱</div>
-    <div id="text" class="message">Hold me to make me bloom 🌸</div>
+    <div id="text" class="message">Tap me 🌸</div>
 </div>
 
 <script>
 let flower = document.getElementById("flower");
 let text = document.getElementById("text");
 let surprise = document.getElementById("surprise");
+let container = document.querySelector(".container");
 
-let size = 1;
-let growing = false;
-let fullyGrown = false;
+let taps = 0;
+let maxTaps = 8;
 
-function grow() {
-    if (!growing || fullyGrown) return;
+flower.addEventListener("click", () => {
 
-    size += 0.03;
-    flower.style.transform = "scale(" + size + ")";
+    taps++;
 
-    if (size >= 3) {
-        fullyGrown = true;
-        flower.innerHTML = "🌸";
-        text.innerHTML = "Watch what happens...";
-        explodeFlowers();
-        setTimeout(showSurprise, 4000);
-        return;
+    // Heartbeat pulse
+    container.style.transform = "scale(1.05)";
+    setTimeout(() => container.style.transform = "scale(1)", 150);
+
+    // Gradual growth
+    let scale = 1 + taps * 0.25;
+    flower.style.transform = "scale(" + scale + ")";
+
+    // Change stages
+    if (taps === 3) flower.innerHTML = "🌿";
+    if (taps === 5) flower.innerHTML = "🌷";
+    if (taps === 7) flower.innerHTML = "🌸";
+
+    if (taps < maxTaps) {
+        text.innerHTML = "Keep tapping...";
     }
 
-    requestAnimationFrame(grow);
-}
+    if (taps === maxTaps) {
+        text.innerHTML = "For you ❤️";
+        explodeFlowers();
+        setTimeout(showSurprise, 3500);
+    }
+
+});
 
 function explodeFlowers() {
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 150; i++) {
+
         let petal = document.createElement("div");
         petal.className = "particle";
         petal.innerHTML = "🌸";
@@ -118,27 +142,14 @@ function explodeFlowers() {
 
         document.body.appendChild(petal);
 
-        setTimeout(() => {
-            petal.remove();
-        }, 4000);
+        setTimeout(() => petal.remove(), 4000);
     }
 }
 
 function showSurprise() {
-    document.querySelector(".container").style.opacity = "0";
+    container.style.opacity = "0";
     surprise.style.opacity = "1";
 }
-
-flower.addEventListener("touchstart", () => {
-    growing = true;
-    grow();
-});
-flower.addEventListener("touchend", () => growing = false);
-flower.addEventListener("mousedown", () => {
-    growing = true;
-    grow();
-});
-flower.addEventListener("mouseup", () => growing = false);
 </script>
 
 </body>
